@@ -1,0 +1,27 @@
+{
+  "name": "jirabot",
+  "version": "1.0.0",
+  "description": "JIRA Bot application.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/plkumar/JiraBot.git"
+  },
+  "keywords": [
+    "jira",
+    "bot"
+  ],
+  "author": "Lakshman Peethani",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/plkumar/JiraBot/issues"
+  },
+  "homepage": "https://github.com/plkumar/JiraBot#readme",
+  "dependencies": {
+    "botframework": "^0.10.0",
+    "restify": "^4.1.0"
+  }
+}
