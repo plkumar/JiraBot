@@ -23,6 +23,17 @@ bot.configure({
 });
 bot.add('/', dialog);
 dialog.onDefault(builder.DialogAction.send("I'm sorry I didn't understand."));
+dialog.on("HelpMe", [function (session, result) {
+        session.send(`
+    you can say:
+    list projects
+    show projects
+    add comment on JIRA-1234
+    `);
+    }]);
+dialog.on("GreetUser", [function (session, results) {
+        session.send("Hello, i'm Jira Bot, how can i help you today?");
+    }]);
 dialog.on('GetProjects', [function (session, args, next) {
         if (args.entities.length > 0) {
             next();
