@@ -89,10 +89,6 @@ dialog.on('GetAllIssues', [
     }
 ]);
 
-// bot.add('/', function (session) {
-//     session.send('Hello World!');
-// });
-
 bot.on('DeleteUserData', function (message) {
     console.log("We shall delete user data here.");
 });
