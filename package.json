@@ -23,6 +23,7 @@
   "dependencies": {
     "botbuilder": "^1.0.0",
     "node-fetch": "^1.5.3",
+    "node-jira": "^0.2.0",
     "restify": "^4.1.0"
   }
 }
