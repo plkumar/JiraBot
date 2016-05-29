@@ -35,7 +35,7 @@ dialog.on("HelpMe", [function (session, result) {
     `);
 }]);
 
-dialog.on("AddComment", [function (session, args, next) {
+dialog.on("AddComment", [function (session, args: luis.LUISResponse, next) {
 
     var issueNumber = builder.EntityRecognizer.findEntity(args.entities, 'issue_number');
     var commentText = builder.EntityRecognizer.findEntity(args.entities, 'comment_text');
@@ -50,30 +50,28 @@ dialog.on("AddComment", [function (session, args, next) {
     } else {
         next();
     }
-    
+
 }, function (session, results, next) {
     //console.log(results.response);
     var commentObject = session.dialogData.commentObject;
-    if(results.response){
+    if (results.response) {
         commentObject.issueNumber = results.response;
     }
-    
-    if(!commentObject.commentText){
+
+    if (!commentObject.commentText) {
         builder.Prompts.text(session, "Enter comment text.");
     } else {
         next();
     }
-    
+
 }, function (session, results) {
     //console.log(results.response);
     var commentObject = session.dialogData.commentObject;
-    if(results.response)
-    {
+    if (results.response) {
         commentObject.commentText = results.response;
     }
-    
-    if(commentObject.issueNumber && commentObject.commentText)
-    {
+
+    if (commentObject.issueNumber && commentObject.commentText) {
         session.send(`creating comment on issue ${commentObject.issueNumber} text: ${commentObject.commentText}`);
     } else {
         session.send("Not sure what to do.");
@@ -81,30 +79,29 @@ dialog.on("AddComment", [function (session, args, next) {
 }]);
 
 
-dialog.on("ShowIssue", [function (session, args, next) {
+dialog.on("ShowIssue", [function (session, args: luis.LUISResponse, next) {
     var issue = builder.EntityRecognizer.findEntity(args.entities, 'issue_number');
-    
+
     var issueNumber = session.dialogData.issueNumber = issue.entity;
-    if(!issueNumber){
+    if (!issueNumber) {
         builder.Prompts.text(session, "Enter issue number.")
     } else {
-        next({"response":issueNumber});
+        next({ "response": issueNumber });
     }
 }, function (session, results) {
-    if(results.response)
-    {
+    if (results.response) {
         var issueNumber = results.response;
         while (issueNumber.indexOf(' ') > 0) {
             issueNumber = issueNumber.replace(' ', '')
         }
         issueNumber = session.dialogData.issueNumber = issueNumber;
-        
+
         jira.findIssue(issueNumber, function (error, issue) {
             session.send(`Issue ${issueNumber}
             Summary ${issue.fields.summary}
             Status ${issue.fields.status.name}`)
         });
-    } else{
+    } else {
         session.send("not able to get issue number.");
     }
 }]);
@@ -113,7 +110,7 @@ dialog.on("GreetUser", [function (session, results) {
     session.send("Hello, i'm Jira Bot, how can i help you today?");
 }]);
 
-dialog.on('GetProjects', [function (session, args, next) {
+dialog.on('GetProjects', [function (session, args: luis.LUISResponse, next) {
 
     if (args.entities.length > 0) {
         next();
@@ -140,27 +137,27 @@ dialog.on('GetProjects', [function (session, args, next) {
         session.endDialog("bye");
     }]);
 
-dialog.on('GetAllIssues', function (session, args) {
-        // Resolve and store any entities passed from LUIS.
-        var status = builder.EntityRecognizer.findEntity(args.entities, 'issue_status');
-        var type = builder.EntityRecognizer.findEntity(args.entities, 'issue_type');
-        var assignedTo = builder.EntityRecognizer.findEntity(args.entities, 'assigned_to');
-        var query = session.dialogData.query = {
-            status: status ? status.entity : null,
-            type: type ? type.entity : null,
-            assignedTo: assignedTo ? assignedTo.entity : null
-        };
-        
-        var jqlquery = " status = Open and assignee = currentUser()";
-        
-        if(query.type) {
-            
-            jqlquery =  " issuetype = ${} AND";
-        }
-        
-        session.send(`searching for issues with status ${query.status}, of type ${query.type} and assigned to ${query.assignedTo}`);
-        console.log(status, type, assignedTo);
+dialog.on('GetAllIssues', function (session, args: luis.LUISResponse) {
+    // Resolve and store any entities passed from LUIS.
+    var status = builder.EntityRecognizer.findEntity(args.entities, 'issue_status');
+    var type = builder.EntityRecognizer.findEntity(args.entities, 'issue_type');
+    var assignedTo = builder.EntityRecognizer.findEntity(args.entities, 'assigned_to');
+    var query = session.dialogData.query = {
+        status: status ? status.entity : null,
+        type: type ? type.entity : null,
+        assignedTo: assignedTo ? assignedTo.entity : null
+    };
+
+    var jqlquery = " status = Open and assignee = currentUser()";
+
+    if (query.type) {
+
+        jqlquery = " issuetype = ${} AND";
     }
+
+    session.send(`searching for issues with status ${query.status}, of type ${query.type} and assigned to ${query.assignedTo}`);
+    console.log(status, type, assignedTo);
+}
 );
 
 bot.on('DeleteUserData', function (message) {
