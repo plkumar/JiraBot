@@ -5,7 +5,8 @@
             "name": "Launch",
             "type": "node",
             "request": "launch",
-            "program": "${workspaceRoot}/app.js",
+            "program": "${workspaceRoot}/index.ts",
+            "sourceMaps": true,
             "stopOnEntry": false,
             "args": [],
             "cwd": "${workspaceRoot}",
@@ -18,7 +19,6 @@
                 "NODE_ENV": "development"
             },
             "externalConsole": false,
-            "sourceMaps": false,
             "outDir": null
         },
         {

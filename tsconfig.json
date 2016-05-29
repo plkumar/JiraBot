@@ -3,7 +3,10 @@
     "compilerOptions": {
         "target": "es6",
         "module": "commonjs",
-        "sourceMap": true
-    },
-    "allowJs":true 
+        "sourceMap": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "outDir": "bin",
+        "allowJs": true
+    }
 }
