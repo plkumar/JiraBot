@@ -35,7 +35,28 @@ dialog.on("HelpMe", [function (session, result) {
     `);
 }]);
 
-dialog.on("GreetUser", [function (session, results){
+dialog.on("ShowIssue", [function (session, args, next) { 
+    var issueNumber = builder.EntityRecognizer.findEntity(args.entities, 'issue_number');
+    if (issueNumber && issueNumber.entity ) {
+        session.dialogData.issueNumber = issueNumber;
+        
+        while (issueNumber.entity.indexOf(' ')>0) {
+            issueNumber.entity = issueNumber.entity.replace(' ','')
+        }
+
+        jira.findIssue(issueNumber.entity, function(error, issue) {
+            session.send(`Issue ${issueNumber.entity}
+            Summary ${issue.fields.summary}
+            Status ${issue.fields.status.name}`)
+        });
+    } else {
+        next();
+    }
+}, function (session, results) {
+    session.send("in next");
+}]);
+
+dialog.on("GreetUser", [function (session, results) {
     session.send("Hello, i'm Jira Bot, how can i help you today?");
 }]);
 
@@ -58,7 +79,7 @@ dialog.on('GetProjects', [function (session, args, next) {
 },
     function (session, results, next) {
         console.log(results);
-        session.send("Changing project to " + results.response.entity);
+        session.send(`Changing project to ${results.response.entity}`);
         next();
     },
     function (session, args) {
@@ -100,15 +121,18 @@ bot.on('DeleteUserData', function (message) {
 });
 
 // Setup Restify Server
-var server = restify.createServer();
+var server = restify.createServer({
+    name: "JiraBot"
+});
+
 server.post('/api/messages', bot.verifyBotFramework(), bot.listen());
 
 // enable static route for web content
 server.get(/\/static\/?.*/, restify.serveStatic({
-    directory: __dirname + '/public',
+    directory: `${__dirname}/public`,
     default: 'index.html'
 }));
 
 server.listen(process.env.port || 3978, function () {
-    console.log('%s listening to %s', server.name, server.url);
+    console.log(`${server.name} listening to ${server.url}`);
 });
