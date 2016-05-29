@@ -106,15 +106,9 @@ dialog.on('GetProjects', [function (session, args, next) {
                 builder.Prompts.choice(session, "Choose project of your choice?", projects);
             });
         }
-    },
-    function (session, results, next) {
+    }, function (session, results) {
         console.log(results);
         session.send(`Changing project to ${results.response.entity}`);
-        next();
-    },
-    function (session, args) {
-        //session.send("you've chosen", args);
-        session.endDialog("bye");
     }]);
 dialog.on('GetAllIssues', function (session, args) {
     // Resolve and store any entities passed from LUIS.
