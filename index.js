@@ -3,16 +3,9 @@
 const restify = require('restify');
 const builder = require('botbuilder');
 const JiraApi = require('jira').JiraApi;
-var config = {
-    host: "jira.allianceglobalservices.com",
-    port: "80",
-    user: "lpeethani",
-    password: "Hasini12$"
-};
-var jira = new JiraApi('http', config.host, config.port, config.user, config.password, '2');
-var luisAppId = "f8f3c825-1076-4b5e-92fb-3ce751869384";
-var luisSubscriptionKey = "c2ba4a70587642b7a4cada97a40584ed";
-var model = `https://api.projectoxford.ai/luis/v1/application?id=${luisAppId}&subscription-key=${luisSubscriptionKey}`;
+var config = require("./config.json");
+var jira = new JiraApi('http', config.jira.host, config.jira.port, config.jira.user, config.jira.password, '2');
+var model = `https://api.projectoxford.ai/luis/v1/application?id=${config.luis.luisAppId}&subscription-key=${config.luis.luisSubscriptionKey}`;
 var dialog = new builder.LuisDialog(model);
 // Create bot and add dialogs
 var bot = new builder.BotConnectorBot({ appId: 'nzen-jirabot', appSecret: '4d5b3c579158471ab9c7e22887974455' });

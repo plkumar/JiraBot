@@ -1,0 +1,12 @@
+{
+    "jira": {
+        "host": "jira.allianceglobalservices.com",
+        "port": "80",
+        "user": "lpeethani",
+        "password": "Hasini12$"
+    },
+    "luis": {
+        "luisAppId": "f8f3c825-1076-4b5e-92fb-3ce751869384",
+        "luisSubscriptionKey": "c2ba4a70587642b7a4cada97a40584ed"
+    }
+}
