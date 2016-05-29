@@ -116,34 +116,23 @@ dialog.on('GetProjects', [function (session, args, next) {
         //session.send("you've chosen", args);
         session.endDialog("bye");
     }]);
-dialog.on('GetAllIssues', [
-    function (session, args, next) {
-        // Resolve and store any entities passed from LUIS.
-        var status = builder.EntityRecognizer.findEntity(args.entities, 'issue_status');
-        var type = builder.EntityRecognizer.findEntity(args.entities, 'issue_type');
-        var assignedTo = builder.EntityRecognizer.findEntity(args.entities, 'assigned_to');
-        var query = session.dialogData.query = {
-            status: status ? status.entity : null,
-            type: type ? type.entity : null,
-            assignedTo: assignedTo ? assignedTo.entity : null
-        };
-        // // Prompt for title
-        if (!query.type) {
-            builder.Prompts.text(session, 'What would you like to call your alarm?');
-        }
-        else {
-            next();
-        }
-        console.log(status, type, assignedTo);
-        //session.endDialog('Hello World!');
-    },
-    function (session, results, next) {
-        console.log(results);
-    },
-    function (session, results) {
-        session.send("in next");
+dialog.on('GetAllIssues', function (session, args) {
+    // Resolve and store any entities passed from LUIS.
+    var status = builder.EntityRecognizer.findEntity(args.entities, 'issue_status');
+    var type = builder.EntityRecognizer.findEntity(args.entities, 'issue_type');
+    var assignedTo = builder.EntityRecognizer.findEntity(args.entities, 'assigned_to');
+    var query = session.dialogData.query = {
+        status: status ? status.entity : null,
+        type: type ? type.entity : null,
+        assignedTo: assignedTo ? assignedTo.entity : null
+    };
+    var jqlquery = " status = Open and assignee = currentUser()";
+    if (query.type) {
+        jqlquery = " issuetype = ${} AND";
     }
-]);
+    session.send(`searching for issues with status ${query.status}, of type ${query.type} and assigned to ${query.assignedTo}`);
+    console.log(status, type, assignedTo);
+});
 bot.on('DeleteUserData', function (message) {
     console.log("We shall delete user data here.");
 });

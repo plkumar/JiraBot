@@ -140,8 +140,7 @@ dialog.on('GetProjects', [function (session, args, next) {
         session.endDialog("bye");
     }]);
 
-dialog.on('GetAllIssues', [
-    function (session, args, next) {
+dialog.on('GetAllIssues', function (session, args) {
         // Resolve and store any entities passed from LUIS.
         var status = builder.EntityRecognizer.findEntity(args.entities, 'issue_status');
         var type = builder.EntityRecognizer.findEntity(args.entities, 'issue_type');
@@ -151,23 +150,18 @@ dialog.on('GetAllIssues', [
             type: type ? type.entity : null,
             assignedTo: assignedTo ? assignedTo.entity : null
         };
-
-        // // Prompt for title
-        if (!query.type) {
-            builder.Prompts.text(session, 'What would you like to call your alarm?');
-        } else {
-            next();
+        
+        var jqlquery = " status = Open and assignee = currentUser()";
+        
+        if(query.type) {
+            
+            jqlquery =  " issuetype = ${} AND";
         }
+        
+        session.send(`searching for issues with status ${query.status}, of type ${query.type} and assigned to ${query.assignedTo}`);
         console.log(status, type, assignedTo);
-        //session.endDialog('Hello World!');
-    },
-    function (session, results, next) {
-        console.log(results);
-    },
-    function (session, results) {
-        session.send("in next");
     }
-]);
+);
 
 bot.on('DeleteUserData', function (message) {
     console.log("We shall delete user data here.");
