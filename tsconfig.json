@@ -6,7 +6,6 @@
         "sourceMap": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        //"outDir": "bin",
         "allowJs": true
     }
 }
