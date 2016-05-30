@@ -3,6 +3,9 @@
 import fs = require('fs');
 import restify = require('restify');
 import builder = require('botbuilder');
+import _ = require('lodash');
+import Search = require('./lib/Search');
+
 const JiraApi = require('jira').JiraApi;
 
 var config = require("./config.json");
@@ -141,18 +144,13 @@ dialog.on('GetAllIssues', function (session, args: luis.LUISResponse) {
         type: type ? type.entity : null,
         assignedTo: assignedTo ? assignedTo.entity : null
     };
-
-    var jqlquery = " status = Open and assignee = currentUser()";
-
-    if (query.type) {
-
-        jqlquery = " issuetype = ${} AND";
-    }
+    
+    var jsearch = new Search(null);
+    console.log(jsearch.any('assignee','currentUser()').query());
 
     session.send(`searching for issues with status ${query.status}, of type ${query.type} and assigned to ${query.assignedTo}`);
-    console.log(status, type, assignedTo);
-}
-);
+    //console.log(status, type, assignedTo);
+});
 
 bot.on('DeleteUserData', function (message) {
     console.log("We shall delete user data here.");
