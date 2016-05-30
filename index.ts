@@ -54,7 +54,7 @@ dialog.on("LogWork", [function (session, args: luis.LUISResponse, next) {
     if(!logWorkObject.issueNumber) {
         builder.Prompts.text(session, "Please enter an issue number.");
     } else if(!logWorkObject.duration){
-        builder.Prompts.time(session, "enter duration.");
+        builder.Prompts.text(session, "enter duration.");
     }else {
         next()
     }
