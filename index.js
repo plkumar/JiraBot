@@ -2,6 +2,7 @@
 "use strict";
 const restify = require('restify');
 const builder = require('botbuilder');
+const _ = require('lodash');
 const Search = require('./lib/Search');
 const JiraApi = require('jira').JiraApi;
 var config = require("./config.json");
@@ -17,6 +18,9 @@ bot.configure({
 });
 bot.add('/', dialog);
 dialog.onDefault(builder.DialogAction.send("I'm sorry I didn't understand."));
+dialog.on("GreetUser", [function (session, results) {
+        session.send("Hello, i'm Jira Bot, how can i help you today?");
+    }]);
 dialog.on("HelpMe", [function (session, result) {
         session.send(`
     you can say:
@@ -24,6 +28,27 @@ dialog.on("HelpMe", [function (session, result) {
     show projects
     add comment on JIRA-1234
     `);
+    }]);
+dialog.on("LogWork", [function (session, args, next) {
+        var issueNumber = builder.EntityRecognizer.findEntity(args.entities, 'issue_number');
+        var duration = builder.EntityRecognizer.findEntity(args.entities, 'builtin.datetime.duration');
+        var logWorkObject = session.dialogData.logWorkObject = {
+            issueNumber: issueNumber ? issueNumber.entity : session.dialogData.issueNumber ? session.dialogData.issueNumber : null,
+            duration: duration ? duration.resolution.duration : null
+        };
+        if (!logWorkObject.issueNumber) {
+            builder.Prompts.text(session, "Please enter an issue number.");
+        }
+        else if (!logWorkObject.duration) {
+            builder.Prompts.time(session, "enter duration.");
+        }
+        else {
+            next();
+        }
+    }, function (session, results, next) {
+        next();
+    }, function (session, results) {
+        session.send(`logging ${session.dialogData.logWorkObject.duration} on issue # ${session.dialogData.logWorkObject.issueNumber}`);
     }]);
 dialog.on("AddComment", [function (session, args, next) {
         var issueNumber = builder.EntityRecognizer.findEntity(args.entities, 'issue_number');
@@ -89,9 +114,6 @@ dialog.on("ShowIssue", [function (session, args, next) {
             session.send("not able to get issue number.");
         }
     }]);
-dialog.on("GreetUser", [function (session, results) {
-        session.send("Hello, i'm Jira Bot, how can i help you today?");
-    }]);
 dialog.on('GetProjects', [function (session, args, next) {
         if (args.entities.length > 0) {
             next();
@@ -122,8 +144,30 @@ dialog.on('GetAllIssues', function (session, args) {
         assignedTo: assignedTo ? assignedTo.entity : null
     };
     var jsearch = new Search(null);
-    console.log(jsearch.any('assignee', 'currentUser()').query());
-    session.send(`searching for issues with status ${query.status}, of type ${query.type} and assigned to ${query.assignedTo}`);
+    if (query.type)
+        jsearch.where("issueType", _.capitalize(query.type));
+    if (query.status)
+        jsearch.where("status", _.capitalize(query.status));
+    if (query.assignedTo) {
+        if (query.assignedTo == "my" || query.assignedTo == "me") {
+            jsearch.where("assignee", "currentUser()");
+        }
+        else {
+            jsearch.where("assignee", query.assignedTo);
+        }
+    }
+    var jqlquery = jsearch.query();
+    jira.searchJira(jqlquery, null, (error, data) => {
+        if (error) {
+            session.send("Error querying jira");
+        }
+        var issueList = "";
+        _.forEach(data.issues, (issue) => {
+            issueList = `${issueList}\n${issue.key} :: ${issue.fields.summary}\n`;
+        });
+        session.send(issueList);
+    });
+    //session.send(`searching for issues with status ${query.status}, of type ${query.type} and assigned to ${query.assignedTo}`);
     //console.log(status, type, assignedTo);
 });
 bot.on('DeleteUserData', function (message) {
