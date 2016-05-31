@@ -170,6 +170,16 @@ dialog.on('GetAllIssues', function (session, args) {
     //session.send(`searching for issues with status ${query.status}, of type ${query.type} and assigned to ${query.assignedTo}`);
     //console.log(status, type, assignedTo);
 });
+function getRecognizedPhrase(text) {
+    var rItems = [];
+    _.forEach(config.phraseList, (item) => {
+        if (_.isMatch(item, { 'phrases': [_.lowerCase(text)] })) {
+            rItems.push({ 'key': item.key, 'value': item.value });
+        }
+    });
+    return _.head(rItems);
+}
+console.log(getRecognizedPhrase("Defects"));
 bot.on('DeleteUserData', function (message) {
     console.log("We shall delete user data here.");
 });

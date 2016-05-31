@@ -11,26 +11,32 @@
     },
     "phraseList": [
         {
-            "key": "Bug",
-            "values": [
-                "Defect",
-                "Defects",
-                "Bugs",
-                "Bug"
+            "key": "issueType",
+            "value": "Bug",
+            "phrases": [
+                "defect",
+                "defects",
+                "bugs",
+                "bug"
             ]
         },
         {
-            "key": "Story",
-            "values": [
-                "Story",
-                "Stories",
-                "User Story",
-                "User Stories"
+            "key": "issueType",
+            "value": "Story",
+            "phrases": [
+                "story",
+                "stories",
+                "user story",
+                "user stories"
             ]
         },
         {
-          "key":"currentUser()",
-          "values" : ["Me", "My"] 
+            "key": "assignee",
+            "value": "currentUser()",
+            "values": [
+                "me",
+                "my"
+            ]
         }
     ]
 }
