@@ -174,3 +174,4 @@ server.get(/\/static\/?.*/, restify.serveStatic({
 server.listen(process.env.port || 3978, function () {
     console.log(`${server.name} listening to ${server.url}`);
 });
+

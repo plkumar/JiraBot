@@ -1,7 +1,7 @@
 import builder = require('botbuilder');
 import JiraQueryBuilder = require('./JiraQueryBuilder');
 
-class LogWorkHandler {
+class LogWorkHandler implements IJiraBotHandler{
     _dialog: builder.LuisDialog;
     _jira: any;
 
@@ -11,6 +11,7 @@ class LogWorkHandler {
     }
 
     attachHandler() {
+        var that = this;
         this._dialog.on("LogWork", [function (session, args: luis.LUISResponse, next) {
             var issueNumber = builder.EntityRecognizer.findEntity(args.entities, 'issue_number');
             var duration = builder.EntityRecognizer.findEntity(args.entities, 'builtin.datetime.duration');

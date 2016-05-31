@@ -1,7 +1,8 @@
 import builder = require('botbuilder');
 import JiraQueryBuilder = require('./JiraQueryBuilder');
+import _ = require('lodash');
 
-class SearchIssuesHandler {
+class SearchIssuesHandler implements IJiraBotHandler {
 
     _dialog: builder.LuisDialog;
     _jira: any;
@@ -12,6 +13,7 @@ class SearchIssuesHandler {
     }
 
     attachHandler() {
+        var that = this;
         this._dialog.on('GetAllIssues', function (session, args: luis.LUISResponse) {
             // Resolve and store any entities passed from LUIS.
             var status = builder.EntityRecognizer.findEntity(args.entities, 'issue_status');
@@ -41,7 +43,7 @@ class SearchIssuesHandler {
             var jqlquery = jsearch.query();
 
 
-            this._jira.searchJira(jqlquery, null, (error, data) => {
+            that._jira.searchJira(jqlquery, null, (error, data) => {
                 if (error) {
                     session.send("Error querying jira");
                 }
