@@ -15,9 +15,8 @@ var jira = new JiraApi('http', config.jira.host, config.jira.port, config.jira.u
 var model = `https://api.projectoxford.ai/luis/v1/application?id=${config.luis.luisAppId}&subscription-key=${config.luis.luisSubscriptionKey}`;
 var dialog = new builder.LuisDialog(model);
 
-
 // Create bot and add dialogs
-var bot = new builder.BotConnectorBot({ appId: 'nzen-jirabot', appSecret: '4d5b3c579158471ab9c7e22887974455' });
+var bot = new builder.BotConnectorBot({ appId: config.botConnector.appId, appSecret: config.botConnector.appSecret });
 
 bot.configure({
     userWelcomeMessage: "Hello... Welcome.",
@@ -41,8 +40,6 @@ dialog.on("HelpMe", [function (session, result) {
     add comment on JIRA-1234
     `);
 }]);
-
-
 
 dialog.on("AddComment", [function (session, args: luis.LUISResponse, next) {
 
@@ -114,8 +111,6 @@ dialog.on("ShowIssue", [function (session, args: luis.LUISResponse, next) {
         session.send("not able to get issue number.");
     }
 }]);
-
-
 
 dialog.on('GetProjects', [function (session, args: luis.LUISResponse, next) {
 

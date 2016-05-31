@@ -9,6 +9,10 @@
         "luisAppId": "f8f3c825-1076-4b5e-92fb-3ce751869384",
         "luisSubscriptionKey": "c2ba4a70587642b7a4cada97a40584ed"
     },
+    "botConnector" :{
+        "appId" : "nzen-jirabot",
+        "appSecret" : "4d5b3c579158471ab9c7e22887974455"
+    },
     "phraseList": [
         {
             "key": "issueType",
