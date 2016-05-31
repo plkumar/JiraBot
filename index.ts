@@ -4,7 +4,7 @@ import fs = require('fs');
 import restify = require('restify');
 import builder = require('botbuilder');
 import _ = require('lodash');
-import Search = require('./lib/Search');
+import JiraQueryBuilder = require('./lib/JiraQueryBuilder');
 
 const JiraApi = require('jira').JiraApi;
 
@@ -169,7 +169,7 @@ dialog.on('GetAllIssues', function (session, args: luis.LUISResponse) {
         assignedTo: assignedTo ? assignedTo.entity : null
     };
     
-    var jsearch = new Search();
+    var jsearch = new JiraQueryBuilder();
     if(query.type) 
         jsearch.where("issueType",_.capitalize(query.type));
     

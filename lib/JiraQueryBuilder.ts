@@ -7,7 +7,7 @@
  * @api public
  */
 
-class Search {
+class JiraQueryBuilder {
 
   _jira: any;
   _where: String[];
@@ -97,7 +97,7 @@ class Search {
    * @api public
    */
 
-  query(query?: String): Search | String {
+  query(query?: String): JiraQueryBuilder | String {
     if (!query) {
       this._query = this._where.join(' AND ');
       this._order.length && (this._query += ' ORDER BY ' + this._order.join(', '));
@@ -136,4 +136,4 @@ class Search {
   };
 }
 
-export = Search;
+export = JiraQueryBuilder;

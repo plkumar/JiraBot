@@ -3,7 +3,7 @@
 const restify = require('restify');
 const builder = require('botbuilder');
 const _ = require('lodash');
-const Search = require('./lib/Search');
+const JiraQueryBuilder = require('./lib/JiraQueryBuilder');
 const JiraApi = require('jira').JiraApi;
 var config = require("./config.json");
 var jira = new JiraApi('http', config.jira.host, config.jira.port, config.jira.user, config.jira.password, '2');
@@ -143,7 +143,7 @@ dialog.on('GetAllIssues', function (session, args) {
         type: type ? type.entity : null,
         assignedTo: assignedTo ? assignedTo.entity : null
     };
-    var jsearch = new Search();
+    var jsearch = new JiraQueryBuilder();
     if (query.type)
         jsearch.where("issueType", _.capitalize(query.type));
     if (query.status)
