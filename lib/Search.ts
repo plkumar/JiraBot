@@ -9,12 +9,12 @@
 
 class Search {
 
-   _jira:any;
-   _where:String[];
-   _order:String[];
-   _query:String;
-  
-  constructor(jira?:any) {
+  _jira: any;
+  _where: String[];
+  _order: String[];
+  _query: String;
+
+  constructor(jira?: any) {
     this._jira = jira;
     this._where = [];
     this._order = [];
@@ -29,7 +29,7 @@ class Search {
    * @api public
    */
 
-  quote(str) {
+  quote(str: String) {
     return str && typeof str === 'string' && str.indexOf(' ') > 0 && str.indexOf('"') < 0 && ('"' + str + '"') || str;
   };
 
@@ -41,7 +41,7 @@ class Search {
    * @api public
    */
 
-  where(key, value) {
+  where(key: String, value: String) {
     value !== undefined && this._where.push(this.quote(key) + ' = ' + this.quote(value));
     return this;
   }
@@ -54,7 +54,7 @@ class Search {
    * @api public
    */
 
-  whereIn(key) {
+  whereIn(key: String) {
     var value = Array.prototype.constructor.apply(null, arguments).slice(1);
     value = value.length > 1 ? '(' + value.map(this.quote).join(', ') + ')' : this.quote(value[0]);
     this._where.push(this.quote(key) + ' in ' + value);
@@ -97,7 +97,7 @@ class Search {
    * @api public
    */
 
-  query(query?:String):Search | String {
+  query(query?: String): Search | String {
     if (!query) {
       this._query = this._where.join(' AND ');
       this._order.length && (this._query += ' ORDER BY ' + this._order.join(', '));
