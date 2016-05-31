@@ -169,7 +169,7 @@ dialog.on('GetAllIssues', function (session, args: luis.LUISResponse) {
         assignedTo: assignedTo ? assignedTo.entity : null
     };
     
-    var jsearch = new Search(null);
+    var jsearch = new Search();
     if(query.type) 
         jsearch.where("issueType",_.capitalize(query.type));
     
