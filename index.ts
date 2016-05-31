@@ -42,27 +42,7 @@ dialog.on("HelpMe", [function (session, result) {
     `);
 }]);
 
-dialog.on("LogWork", [function (session, args: luis.LUISResponse, next) {
-    var issueNumber = builder.EntityRecognizer.findEntity(args.entities, 'issue_number');
-    var duration = builder.EntityRecognizer.findEntity(args.entities, 'builtin.datetime.duration');
-    
-    var logWorkObject=session.dialogData.logWorkObject = {
-        issueNumber: issueNumber ? issueNumber.entity : session.dialogData.issueNumber ? session.dialogData.issueNumber : null,
-        duration : duration ? duration.resolution.duration : null
-    }
-    
-    if(!logWorkObject.issueNumber) {
-        builder.Prompts.text(session, "Please enter an issue number.");
-    } else if(!logWorkObject.duration){
-        builder.Prompts.text(session, "enter duration.");
-    }else {
-        next()
-    }
-}, function (session, results, next) {
-    next();
-}, function (session, results) {
-    session.send(`logging ${session.dialogData.logWorkObject.duration} on issue # ${session.dialogData.logWorkObject.issueNumber}`);
-}]);
+
 
 dialog.on("AddComment", [function (session, args: luis.LUISResponse, next) {
 
@@ -158,54 +138,13 @@ dialog.on('GetProjects', [function (session, args: luis.LUISResponse, next) {
     session.send(`Changing project to ${results.response.entity}`);
 }]);
 
-dialog.on('GetAllIssues', function (session, args: luis.LUISResponse) {
-    // Resolve and store any entities passed from LUIS.
-    var status = builder.EntityRecognizer.findEntity(args.entities, 'issue_status');
-    var type = builder.EntityRecognizer.findEntity(args.entities, 'issue_type');
-    var assignedTo = builder.EntityRecognizer.findEntity(args.entities, 'assigned_to');
-    var query = session.dialogData.query = {
-        status: status ? status.entity : null,
-        type: type ? type.entity : null,
-        assignedTo: assignedTo ? assignedTo.entity : null
-    };
-    
-    var jsearch = new JiraQueryBuilder();
-    if(query.type) 
-        jsearch.where("issueType",_.capitalize(query.type));
-    
-    if(query.status)
-        jsearch.where("status", _.capitalize(query.status));
-        
-    if(query.assignedTo)
-    {
-        if(query.assignedTo == "my" || query.assignedTo =="me")
-        {
-            jsearch.where("assignee", "currentUser()");
-        }else{
-            jsearch.where("assignee", query.assignedTo);
-        }
-    }
-    
-    var jqlquery = jsearch.query();
-    
+import LogWorkHandler = require('./lib/LogWorkHandler');
+var logWorkHandler = new LogWorkHandler(dialog, jira);
+logWorkHandler.attachHandler();
 
-    jira.searchJira(jqlquery,null, (error, data) => {
-       if(error){
-           session.send("Error querying jira");
-       }
-       
-       var issueList = ""
-       _.forEach(data.issues, (issue) => {
-           issueList = `${issueList}\n${issue.key} :: ${issue.fields.summary}\n`
-       });
-       
-       session.send(issueList);
-       
-    });
-
-    //session.send(`searching for issues with status ${query.status}, of type ${query.type} and assigned to ${query.assignedTo}`);
-    //console.log(status, type, assignedTo);
-});
+import SearchIssuesHandler = require('./lib/SearchIssuesHandler');
+var searchHandler = new SearchIssuesHandler(dialog, jira);
+searchHandler.attachHandler();
 
 function getRecognizedPhrase(text) {
         var rItems =[]

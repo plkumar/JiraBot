@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Create a new Search.
+ * Create a new JiraQueryBuilder.
  *
  * @option {Jira} jira jira instance for making requests
  * @api public
