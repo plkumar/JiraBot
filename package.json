@@ -24,6 +24,7 @@
     "botbuilder": "^1.0.0",
     "jira": "^0.9.2",
     "lodash": "^4.13.1",
+    "mongodb": "^2.1.21",
     "node-fetch": "^1.5.3",
     "node-jira": "^0.2.0",
     "restify": "^4.1.0"
