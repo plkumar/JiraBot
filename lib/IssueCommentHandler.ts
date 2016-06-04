@@ -22,6 +22,7 @@ class IssueCommentHandler implements IJiraBotHandler {
                     issueNumber: issueNumber ? issueNumber.entity : session.dialogData.issueNumber ? session.dialogData.issueNumber : null,
                 }
 
+
                 if (!commentObject.issueNumber) {
                     builder.Prompts.text(session, "which issue comments you would like to see");
                 } else {
