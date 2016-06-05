@@ -26,7 +26,7 @@ class ProjectHandler implements IJiraBotHandler {
                     result.forEach((item) => {
                         projects.push(`[${item.key}] - ${item.name}`);
                     });
-                    session.dialogData.projects = projects;
+                    session.userData.projects = projects;
                     builder.Prompts.choice(session, "Choose project of your choice?", projects);
                 });
             }

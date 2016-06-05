@@ -18,8 +18,8 @@ class IssueCommentHandler implements IJiraBotHandler {
             (session, args: luis.LUISResponse, next) => {
                 var issueNumber = builder.EntityRecognizer.findEntity(args.entities, 'issue_number');
 
-                var commentObject = session.dialogData.commentObject = {
-                    issueNumber: issueNumber ? issueNumber.entity : session.dialogData.issueNumber ? session.dialogData.issueNumber : null,
+                var commentObject = session.userData.commentObject = {
+                    issueNumber: issueNumber ? issueNumber.entity : session.userData.issueNumber ? session.userData.issueNumber : null,
                 }
 
 
@@ -30,8 +30,8 @@ class IssueCommentHandler implements IJiraBotHandler {
                 }
             },
             (session, results) => {
-                if (!session.dialogData.commentObject && session.dialogData.commentObject.issueNumber) {
-                    var commentObject = session.dialogData.issueNumber = {
+                if (!session.userData.commentObject && session.userData.commentObject.issueNumber) {
+                    var commentObject = session.userData.issueNumber = {
                         issueNumber: results.response ? results.response : null,
                     }
                 }
@@ -45,8 +45,8 @@ class IssueCommentHandler implements IJiraBotHandler {
             var issueNumber = builder.EntityRecognizer.findEntity(args.entities, 'issue_number');
             var commentText = builder.EntityRecognizer.findEntity(args.entities, 'comment_text');
 
-            var commentObject = session.dialogData.commentObject = {
-                issueNumber: issueNumber ? issueNumber.entity : session.dialogData.issueNumber ? session.dialogData.issueNumber : null,
+            var commentObject = session.userData.commentObject = {
+                issueNumber: issueNumber ? issueNumber.entity : session.userData.issueNumber ? session.userData.issueNumber : null,
                 commentText: commentText ? commentText.entity : null
             };
 
@@ -56,9 +56,10 @@ class IssueCommentHandler implements IJiraBotHandler {
                 next();
             }
 
-        }, function (session, results, next) {
+        },
+        (session, results, next) => {
             //console.log(results.response);
-            var commentObject = session.dialogData.commentObject;
+            var commentObject = session.userData.commentObject;
             if (results.response) {
                 commentObject.issueNumber = results.response;
             }
@@ -69,9 +70,10 @@ class IssueCommentHandler implements IJiraBotHandler {
                 next();
             }
 
-        }, function (session, results) {
+        },
+        (session, results) => {
             //console.log(results.response);
-            var commentObject = session.dialogData.commentObject;
+            var commentObject = session.userData.commentObject;
             if (results.response) {
                 commentObject.commentText = results.response;
             }

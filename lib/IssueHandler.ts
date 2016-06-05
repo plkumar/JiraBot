@@ -38,7 +38,7 @@ Status : *${issue.fields.status.name}*`
                     issueNumber = issueNumber.replace(' ', '')
                 }
                 
-                issueNumber = session.dialogData.issueNumber = issueNumber;
+                issueNumber = session.userData.issueNumber = session.userData.issueNumber = issueNumber;
 
                 that._jira.findIssue(issueNumber, function (error, issue) {
                     if(!error)
@@ -59,7 +59,7 @@ Status : *${issue.fields.status.name}*`
             var status = builder.EntityRecognizer.findEntity(args.entities, 'issue_status');
             var type = builder.EntityRecognizer.findEntity(args.entities, 'issue_type');
             var assignedTo = builder.EntityRecognizer.findEntity(args.entities, 'assigned_to');
-            var query = session.dialogData.query = {
+            var query = session.userData.query = {
                 status: status ? status.entity : null,
                 type: type ? type.entity : null,
                 assignedTo: assignedTo ? assignedTo.entity : null

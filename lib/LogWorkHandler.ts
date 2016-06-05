@@ -16,8 +16,8 @@ class LogWorkHandler implements IJiraBotHandler{
             var issueNumber = builder.EntityRecognizer.findEntity(args.entities, 'issue_number');
             var duration = builder.EntityRecognizer.findEntity(args.entities, 'builtin.datetime.duration');
 
-            var logWorkObject = session.dialogData.logWorkObject = {
-                issueNumber: issueNumber ? issueNumber.entity : session.dialogData.issueNumber ? session.dialogData.issueNumber : null,
+            var logWorkObject = session.userData.logWorkObject = {
+                issueNumber: issueNumber ? issueNumber.entity : session.userData.issueNumber ? session.userData.issueNumber : null,
                 duration: duration ? duration.resolution.duration : null
             }
 
@@ -31,7 +31,7 @@ class LogWorkHandler implements IJiraBotHandler{
         }, function (session, results, next) {
             next();
         }, function (session, results) {
-            session.send(`logging ${session.dialogData.logWorkObject.duration} on issue # ${session.dialogData.logWorkObject.issueNumber}`);
+            session.send(`logging ${session.userData.logWorkObject.duration} on issue # ${session.userData.logWorkObject.issueNumber}`);
         }]);
     }
 }
