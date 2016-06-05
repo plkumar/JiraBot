@@ -55,10 +55,6 @@ import LogWorkHandler = require('./lib/LogWorkHandler');
 var logWorkHandler = new LogWorkHandler(dialog, jira);
 logWorkHandler.attachHandler();
 
-import SearchIssuesHandler = require('./lib/SearchIssuesHandler');
-var searchHandler = new SearchIssuesHandler(dialog, jira);
-searchHandler.attachHandler();
-
 import IssueHandler = require('./lib/IssueHandler');
 var issueHandler = new IssueHandler(dialog, jira);
 issueHandler.attachHandler();
