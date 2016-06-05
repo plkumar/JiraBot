@@ -8,11 +8,13 @@ var jira = new JiraApi('http', config.jira.host, config.jira.port, config.jira.u
 var model = `https://api.projectoxford.ai/luis/v1/application?id=${config.luis.luisAppId}&subscription-key=${config.luis.luisSubscriptionKey}`;
 var dialog = new builder.LuisDialog(model);
 // Create bot and add dialogs
-var bot = new builder.BotConnectorBot({ appId: config.botConnector.appId, appSecret: config.botConnector.appSecret });
+var bot = new builder.BotConnectorBot();
 bot.configure({
+    appId: config.botConnector.appId,
+    appSecret: config.botConnector.appSecret,
     userWelcomeMessage: "Hello... Welcome.",
     goodbyeMessage: "Goodbye...",
-    groupWelcomeMessage: "Welcome."
+    groupWelcomeMessage: "Welcome.",
 });
 bot.add('/', dialog);
 dialog.onDefault(builder.DialogAction.send("I'm sorry I didn't understand."));

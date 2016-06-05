@@ -5,6 +5,7 @@ import restify = require('restify');
 import builder = require('botbuilder');
 import _ = require('lodash');
 import JiraQueryBuilder = require('./lib/JiraQueryBuilder');
+import MongoStorage = require('./lib/MongoStorage');
 
 const JiraApi = require('jira').JiraApi;
 
@@ -16,12 +17,17 @@ var model = `https://api.projectoxford.ai/luis/v1/application?id=${config.luis.l
 var dialog = new builder.LuisDialog(model);
 
 // Create bot and add dialogs
-var bot = new builder.BotConnectorBot({ appId: config.botConnector.appId, appSecret: config.botConnector.appSecret });
+var bot = new builder.BotConnectorBot();
 
 bot.configure({
+    appId: config.botConnector.appId,
+    appSecret: config.botConnector.appSecret,
     userWelcomeMessage: "Hello... Welcome.",
     goodbyeMessage: "Goodbye...",
-    groupWelcomeMessage: "Welcome."
+    groupWelcomeMessage: "Welcome.",
+    //conversationStore : new MongoStorage(`mongodb://localhost:27017/jirabot`),
+    //perUserInConversationStore :  new MongoStorage(`mongodb://localhost:27017/jirabot`),
+    //userStore : new MongoStorage(`mongodb://localhost:27017/jirabot`)
 });
 
 bot.add('/', dialog);
