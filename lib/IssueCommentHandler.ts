@@ -1,6 +1,6 @@
-import builder = require('botbuilder');
-import JiraQueryBuilder = require('./JiraQueryBuilder');
-import _ = require('lodash');
+import builder = require("botbuilder");
+import JiraQueryBuilder = require("./JiraQueryBuilder");
+import _ = require("lodash");
 
 class IssueCommentHandler implements IJiraBotHandler {
 
@@ -13,14 +13,14 @@ class IssueCommentHandler implements IJiraBotHandler {
     }
 
     attachHandler() {
-        var that = this;
-        this._dialog.on('ShowComments', [
+        const that = this;
+        this._dialog.on("ShowComments", [
             (session, args: luis.LUISResponse, next) => {
-                var issueNumber = builder.EntityRecognizer.findEntity(args.entities, 'issue_number');
+                let issueNumber = builder.EntityRecognizer.findEntity(args.entities, "issue_number");
 
-                var commentObject = session.userData.commentObject = {
+                let commentObject = session.userData.commentObject = {
                     issueNumber: issueNumber ? issueNumber.entity : session.userData.issueNumber ? session.userData.issueNumber : null,
-                }
+                };
 
 
                 if (!commentObject.issueNumber) {
@@ -31,21 +31,21 @@ class IssueCommentHandler implements IJiraBotHandler {
             },
             (session, results) => {
                 if (!session.userData.commentObject && session.userData.commentObject.issueNumber) {
-                    var commentObject = session.userData.issueNumber = {
+                    let commentObject = session.userData.issueNumber = {
                         issueNumber: results.response ? results.response : null,
-                    }
+                    };
                 }
 
-                session.send(`getting comments for issue ${commentObject.issueNumber}`);
+                session.send(`getting comments for issue ${session.userData.commentObject.issueNumber}`);
             }
         ]);
 
         this._dialog.on("AddComment", [function (session, args: luis.LUISResponse, next) {
 
-            var issueNumber = builder.EntityRecognizer.findEntity(args.entities, 'issue_number');
-            var commentText = builder.EntityRecognizer.findEntity(args.entities, 'comment_text');
+            let issueNumber = builder.EntityRecognizer.findEntity(args.entities, "issue_number");
+            let commentText = builder.EntityRecognizer.findEntity(args.entities, "comment_text");
 
-            var commentObject = session.userData.commentObject = {
+            let commentObject = session.userData.commentObject = {
                 issueNumber: issueNumber ? issueNumber.entity : session.userData.issueNumber ? session.userData.issueNumber : null,
                 commentText: commentText ? commentText.entity : null
             };
@@ -58,8 +58,8 @@ class IssueCommentHandler implements IJiraBotHandler {
 
         },
         (session, results, next) => {
-            //console.log(results.response);
-            var commentObject = session.userData.commentObject;
+            // console.log(results.response);
+            let commentObject = session.userData.commentObject;
             if (results.response) {
                 commentObject.issueNumber = results.response;
             }
@@ -72,8 +72,8 @@ class IssueCommentHandler implements IJiraBotHandler {
 
         },
         (session, results) => {
-            //console.log(results.response);
-            var commentObject = session.userData.commentObject;
+            // console.log(results.response);
+            let commentObject = session.userData.commentObject;
             if (results.response) {
                 commentObject.commentText = results.response;
             }

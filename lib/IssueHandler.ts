@@ -1,7 +1,7 @@
-import builder = require('botbuilder');
-import JiraQueryBuilder = require('./JiraQueryBuilder');
-import _ = require('lodash');
-var config = require("../config.json");
+import builder = require("botbuilder");
+import JiraQueryBuilder = require("./JiraQueryBuilder");
+import _ = require("lodash");
+const config = require("../config.json");
 
 class IssueHandler implements IJiraBotHandler {
 
@@ -12,60 +12,59 @@ class IssueHandler implements IJiraBotHandler {
         this._dialog = dialog;
         this._jira = jira;
     }
-    
-    formatPrintIssue (issue:any) : String {
+
+    formatPrintIssue (issue: any): String {
         return `Issue# [**${issue.key}**](http://${config.jira.host}/browse/${issue.key})
 Summary : ${issue.fields.summary}
-Status : *${issue.fields.status.name}*`
+Status : *${issue.fields.status.name}*`;
     }
 
     attachHandler() {
-        var that = this;
-        
+        const that = this;
+
         this._dialog.on("ShowIssue", [function (session, args: luis.LUISResponse, next) {
-            var issue = builder.EntityRecognizer.findEntity(args.entities, 'issue_number');
+            let issue = builder.EntityRecognizer.findEntity(args.entities, "issue_number");
 
             if (!issue) {
-                builder.Prompts.text(session, ["Enter issue number.", "Please specify the issue number." ])
+                builder.Prompts.text(session, ["Enter issue number.", "Please specify the issue number." ]);
             } else {
-                var issueNumber = issue.entity;
+                let issueNumber = issue.entity;
                 next({ "response": issueNumber });
             }
         }, function (session, results) {
             if (results.response) {
-                var issueNumber = results.response;
-                while (issueNumber.indexOf(' ') > 0) {
-                    issueNumber = issueNumber.replace(' ', '')
+                let issueNumber = results.response;
+                while (issueNumber.indexOf(" ") > 0) {
+                    issueNumber = issueNumber.replace(" ", "");
                 }
-                
+
                 issueNumber = session.userData.issueNumber = session.userData.issueNumber = issueNumber;
 
                 that._jira.findIssue(issueNumber, function (error, issue) {
-                    if(!error)
-                    {
-                    session.send(that.formatPrintIssue(issue))
-                    }else {
+                    if (!error) {
+                    session.send(that.formatPrintIssue(issue));
+                    } else {
                         session.send(`Error ${error}`);
                     }
                 });
-                
+
             } else {
                 session.send("not able to get issue number.");
             }
         }]);
-        
-        this._dialog.on('GetAllIssues', function (session, args: luis.LUISResponse) {
+
+        this._dialog.on("GetAllIssues", function (session, args: luis.LUISResponse) {
             // Resolve and store any entities passed from LUIS.
-            var status = builder.EntityRecognizer.findEntity(args.entities, 'issue_status');
-            var type = builder.EntityRecognizer.findEntity(args.entities, 'issue_type');
-            var assignedTo = builder.EntityRecognizer.findEntity(args.entities, 'assigned_to');
-            var query = session.userData.query = {
+            let status = builder.EntityRecognizer.findEntity(args.entities, "issue_status");
+            let type = builder.EntityRecognizer.findEntity(args.entities, "issue_type");
+            let assignedTo = builder.EntityRecognizer.findEntity(args.entities, "assigned_to");
+            let query = session.userData.query = {
                 status: status ? status.entity : null,
                 type: type ? type.entity : null,
                 assignedTo: assignedTo ? assignedTo.entity : null
             };
 
-            var jsearch = new JiraQueryBuilder();
+            let jsearch = new JiraQueryBuilder();
             if (query.type)
                 jsearch.where("issueType", _.capitalize(query.type));
 
@@ -73,32 +72,31 @@ Status : *${issue.fields.status.name}*`
                 jsearch.where("status", _.capitalize(query.status));
 
             if (query.assignedTo) {
-                if (query.assignedTo == "my" || query.assignedTo == "me") {
+                if (query.assignedTo === "my" || query.assignedTo === "me") {
                     jsearch.where("assignee", "currentUser()");
                 } else {
                     jsearch.where("assignee", query.assignedTo);
                 }
             }
 
-            var jqlquery = jsearch.query();
-
+            let jqlquery = jsearch.query();
 
             that._jira.searchJira(jqlquery, null, (error, data) => {
                 if (error) {
                     session.send("Error querying jira");
                 }
 
-                var issueList = ""
+                let issueList = "";
                 _.forEach(data.issues, (issue) => {
-                    issueList = `${issueList}\n${issue.key} :: ${issue.fields.summary}\n`
+                    issueList = `${issueList}\n${issue.key} :: ${issue.fields.summary}\n`;
                 });
 
                 session.send(issueList);
 
             });
 
-            //session.send(`searching for issues with status ${query.status}, of type ${query.type} and assigned to ${query.assignedTo}`);
-            //console.log(status, type, assignedTo);
+            // session.send(`searching for issues with status ${query.status}, of type ${query.type} and assigned to ${query.assignedTo}`);
+            // console.log(status, type, assignedTo);
         });
     }
 }

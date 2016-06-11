@@ -1,6 +1,6 @@
-import builder = require('botbuilder');
-import JiraQueryBuilder = require('./JiraQueryBuilder');
-import _ = require('lodash');
+import builder = require("botbuilder");
+import JiraQueryBuilder = require("./JiraQueryBuilder");
+import _ = require("lodash");
 
 class ProjectHandler implements IJiraBotHandler {
 
@@ -13,16 +13,16 @@ class ProjectHandler implements IJiraBotHandler {
     }
 
     attachHandler() {
-        var that = this;
-        this._dialog.on('GetProjects', [function (session, args: luis.LUISResponse, next) {
+        const that = this;
+        this._dialog.on("GetProjects", [function (session, args: luis.LUISResponse, next) {
 
             if (args.entities.length > 0) {
                 next();
             } else {
                 that._jira.listProjects(function (error, result: [any]) {
-                    //console.log("project", result);
+                    // console.log("project", result);
 
-                    var projects = [];
+                    let projects = [];
                     result.forEach((item) => {
                         projects.push(`[${item.key}] - ${item.name}`);
                     });
